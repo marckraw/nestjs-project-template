@@ -6,6 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "dryrun": "echo 'dryrun test'",
     "-----------------------------------setup for dev--------------------------------------------": "-",
     "prisma:dev:studio": "prisma studio",
     "prisma:dev:deploy": "prisma migrate deploy",
