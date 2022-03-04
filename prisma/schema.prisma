@@ -22,9 +22,44 @@ model User {
     lastName String?
 
     bookmarks Bookmark[]
+    expenses Expense[]
+    categories Category[]
 
     @@map("users")
 }
+
+model Expense {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    title String
+    description String?
+
+    userId Int
+    user User @relation(fields: [userId], references: [id])
+
+    categoryId Int
+    category Category @relation(fields: [categoryId], references: [id])
+
+    @@map("expenses")
+}
+
+model Category {
+    id Int @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    title String @unique
+
+    expenses Expense[]
+
+    userId Int
+    user User @relation(fields: [userId], references: [id])
+
+    @@map("categories")
+}
+
 
 model Bookmark {
     id Int @id @default(autoincrement())
@@ -40,3 +75,4 @@ model Bookmark {
 
     @@map("bookmarks")
 }
+
