@@ -8,6 +8,7 @@ import { LoggerMiddleware } from './utils/logger.middleware';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CategoryModule } from './category/category.module';
+import { ExpenseModule } from './expense/expense.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
     UserModule,
     BookmarkModule,
+    ExpenseModule,
     CategoryModule,
     PrismaModule,
   ],
