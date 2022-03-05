@@ -45,7 +45,7 @@ export class ExpenseController {
     @Body() dto: EditExpenseDto,
     @Param('id', ParseIntPipe) expenseId: number,
   ) {
-    return this.expenseService.editExpenseById(userId, expenseId, dto);
+    return this.expenseService.editExpenseById();
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)

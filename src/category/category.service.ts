@@ -1,6 +1,7 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto, EditCategoryDto } from './dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Injectable()
 export class CategoryService {
@@ -68,10 +69,21 @@ export class CategoryService {
       throw new ForbiddenException('Access to resource denied.');
     }
 
-    return this.prisma.category.delete({
-      where: {
-        id: categoryId,
-      },
-    });
+    try {
+      const deletedCategory = await this.prisma.category.delete({
+        where: {
+          id: categoryId,
+        },
+      });
+    } catch (e) {
+      console.log('################');
+      console.log(e.code);
+      console.log('################');
+      if (e.code === 'P2003') {
+        throw new ForbiddenException("Can't delete category: has children");
+      }
+
+      throw new HttpException('HTTP error', 500);
+    }
   }
 }
