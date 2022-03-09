@@ -1,14 +1,16 @@
 import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCategoryDto, EditCategoryDto } from './dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Injectable()
 export class CategoryService {
   constructor(private prisma: PrismaService) {}
 
-  getCategories(userId: number) {
+  async getCategories(userId: number) {
     return this.prisma.category.findMany({
+      include: {
+        expenses: true,
+      },
       where: {
         userId,
       },
@@ -75,10 +77,9 @@ export class CategoryService {
           id: categoryId,
         },
       });
+
+      return deletedCategory;
     } catch (e) {
-      console.log('################');
-      console.log(e.code);
-      console.log('################');
       if (e.code === 'P2003') {
         throw new ForbiddenException("Can't delete category: has children");
       }

@@ -9,6 +9,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CategoryModule } from './category/category.module';
 import { ExpenseModule } from './expense/expense.module';
+import { IncomeModule } from './income/income.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ExpenseModule } from './expense/expense.module';
     UserModule,
     BookmarkModule,
     ExpenseModule,
+    IncomeModule,
     CategoryModule,
     PrismaModule,
   ],

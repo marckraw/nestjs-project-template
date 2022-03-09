@@ -39,7 +39,7 @@ export class ExpenseController {
     return this.expenseService.createExpense(userId, dto);
   }
 
-  @Patch('/category/:id')
+  @Patch(':id')
   editExpenseById(
     @GetUser('id') userId: number,
     @Body() dto: EditExpenseDto,

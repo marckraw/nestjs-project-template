@@ -6,6 +6,8 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { AuthDto } from '../src/auth/dto';
 import { EditUserDto } from '../src/user/dto';
 import { CreateBookmarkDto, EditBookmarkDto } from '../src/bookmark/dto';
+import { CreateExpenseDto } from '../src/expense/dto';
+import { CreateCategoryDto } from '../src/category/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -133,118 +135,57 @@ describe('App e2e', () => {
     });
   });
 
-  describe.skip('Bookmark', () => {
-    describe('Get empty bookmarks', () => {
-      it('should get EMPTY bookmarks', () => {
-        return pactum
-          .spec()
-          .get('/bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(200)
-          .expectBody([]);
-      });
-    });
-    describe('Create bookmark', () => {
-      it('should create bookmark (passing all arguments)', () => {
-        const dto: CreateBookmarkDto = {
-          description: 'This is main webstite for Google!',
-          link: 'https://www.google.pl',
-          title: 'Google main page',
-        };
+  describe('Categories', () => {
+    it('should create category', () => {
+      const dto: CreateCategoryDto = {
+        title: 'Jedzenie na mieście',
+      };
 
-        return pactum
-          .spec()
-          .post('/bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .withBody(dto)
-          .expectStatus(201)
-          .stores('createdBookmarkId', 'id');
-      });
+      return pactum
+        .spec()
+        .post('/categories')
+        .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+        .withBody(dto)
+        .expectStatus(201)
+        .stores('createdCategoryId', 'id');
     });
-    describe('Get bookmarks', () => {
-      it('should get all bookmarks', () => {
-        return pactum
-          .spec()
-          .get('/bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(200)
-          .expectJsonLength(1);
-      });
-    });
-    describe('Get bookmark by id', () => {
-      it('should get bookmark by id', () => {
-        return pactum
-          .spec()
-          .get('/bookmarks/{id}')
-          .withPathParams('id', '$S{createdBookmarkId}')
-          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(200)
-          .expectBodyContains('$S{createdBookmarkId}');
-      });
-    });
-    describe('Edit bookmark', () => {
-      it('should edit bookmark with passed id', () => {
-        const dto: EditBookmarkDto = {
-          link: 'https://ef.design',
-          title: 'Changed to EF.DESIGN',
-        };
-        return pactum
-          .spec()
-          .patch('/bookmarks/{id}')
-          .withPathParams('id', '$S{createdBookmarkId}')
-          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .withBody(dto)
-          .expectStatus(200)
-          .expectBodyContains(dto.title)
-          .expectBodyContains(dto.link);
-      });
-    });
-    describe('Delete bookmark', () => {
-      it('should delete bookmark', () => {
-        return pactum
-          .spec()
-          .delete('/bookmarks/{id}')
-          .withPathParams('id', '$S{createdBookmarkId}')
-          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(204);
-      });
-      it('should get empty bookmarks after delete', () => {
-        return pactum
-          .spec()
-          .get('/bookmarks')
-          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(200)
-          .expectJsonLength(0);
-      });
+
+    it('should get categories array', () => {
+      return pactum
+        .spec()
+        .get('/categories')
+        .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+        .expectStatus(200)
+        .expectJsonLength(1);
     });
   });
 
   describe('Expense', () => {
-    describe('Get empty bookmarks', () => {
-      it('should get EMPTY bookmarks', () => {
+    describe('Get empty array of expenses', () => {
+      it('should get EMPTY array of expenses', () => {
         return pactum
           .spec()
-          .get('/bookmarks')
+          .get('/expenses')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .expectStatus(200)
           .expectBody([]);
       });
     });
-    describe('Create bookmark', () => {
-      it('should create bookmark (passing all arguments)', () => {
-        const dto: CreateBookmarkDto = {
-          description: 'This is main webstite for Google!',
-          link: 'https://www.google.pl',
-          title: 'Google main page',
+    describe('Create expense', () => {
+      it('should create expense (passing all arguments)', () => {
+        const dto: CreateExpenseDto = {
+          title: 'Jedzenie uber eats',
+          description: 'Jedzenie z uber eatsa 20.00 CHF',
+          categoryId: 1,
         };
 
         return pactum
           .spec()
-          .post('/bookmarks')
+          .post('/expenses')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
           .expectStatus(201)
-          .stores('createdBookmarkId', 'id');
+          .stores('createdExpenseId', 'id');
       });
     });
     describe('Get bookmarks', () => {
