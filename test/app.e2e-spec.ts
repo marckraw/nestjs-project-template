@@ -6,6 +6,8 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import { AuthDto } from '../src/auth/dto';
 import { EditUserDto } from '../src/user/dto';
 import { CreateBookmarkDto, EditBookmarkDto } from '../src/bookmark/dto';
+import { CreateExpenseDto } from '../src/expense/dto';
+import { CreateCategoryDto } from '../src/category/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -22,13 +24,13 @@ describe('App e2e', () => {
       }),
     );
     await app.init();
-    await app.listen(3333);
+    await app.listen(3334);
 
     prisma = app.get(PrismaService);
 
     await prisma.cleanDb();
 
-    pactum.request.setBaseUrl('http://localhost:3333');
+    pactum.request.setBaseUrl('http://localhost:3334');
   });
   afterAll(() => {
     app.close();
@@ -133,32 +135,57 @@ describe('App e2e', () => {
     });
   });
 
-  describe('Bookmark', () => {
-    describe('Get empty bookmarks', () => {
-      it('should get EMPTY bookmarks', () => {
+  describe('Categories', () => {
+    it('should create category', () => {
+      const dto: CreateCategoryDto = {
+        title: 'Jedzenie na mieście',
+      };
+
+      return pactum
+        .spec()
+        .post('/categories')
+        .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+        .withBody(dto)
+        .expectStatus(201)
+        .stores('createdCategoryId', 'id');
+    });
+
+    it('should get categories array', () => {
+      return pactum
+        .spec()
+        .get('/categories')
+        .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+        .expectStatus(200)
+        .expectJsonLength(1);
+    });
+  });
+
+  describe('Expense', () => {
+    describe('Get empty array of expenses', () => {
+      it('should get EMPTY array of expenses', () => {
         return pactum
           .spec()
-          .get('/bookmarks')
+          .get('/expenses')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .expectStatus(200)
           .expectBody([]);
       });
     });
-    describe('Create bookmark', () => {
-      it('should create bookmark (passing all arguments)', () => {
-        const dto: CreateBookmarkDto = {
-          description: 'This is main webstite for Google!',
-          link: 'https://www.google.pl',
-          title: 'Google main page',
+    describe('Create expense', () => {
+      it('should create expense (passing all arguments)', () => {
+        const dto: CreateExpenseDto = {
+          title: 'Jedzenie uber eats',
+          description: 'Jedzenie z uber eatsa 20.00 CHF',
+          categoryId: 1,
         };
 
         return pactum
           .spec()
-          .post('/bookmarks')
+          .post('/expenses')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
           .expectStatus(201)
-          .stores('createdBookmarkId', 'id');
+          .stores('createdExpenseId', 'id');
       });
     });
     describe('Get bookmarks', () => {
