@@ -46,7 +46,7 @@
     "@nestjs/core": "^8.4.2",
     "@nestjs/jwt": "^8.0.0",
     "@nestjs/passport": "^8.2.1",
-    "@nestjs/platform-express": "^8.4.2",
+    "@nestjs/platform-express": "^8.4.4",
     "@nestjs/serve-static": "^2.2.2",
     "@prisma/client": "^3.11.0",
     "argon": "^2.0.21",
